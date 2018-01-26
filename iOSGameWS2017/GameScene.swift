@@ -37,10 +37,32 @@ class GameScene: SKScene {
 //			print("less than 0")
 //		}
 	}
-    
+	
+	func moveDown(pos : CGPoint) {
+//		let moveDownAction: SKAction = SKAction.moveBy(x: pos.x, y: pos.y, duration: 1)
+		let action: SKAction = SKAction.move(to: pos, duration: 1)
+		thePlayer.run(action)
+		
+	}
+	
+	func moveUp(pos: CGPoint) {
+//		let moveUpAction: SKAction = SKAction.moveBy(x: pos.x, y: pos.y, duration: 1)
+		let action: SKAction = SKAction.move(to: pos, duration: 1)
+		thePlayer.run(action)
+	}
     
     func touchDown(atPoint pos : CGPoint) {
-		print("touched at: \(pox.x)")
+		print("Touched at x: \(pos.x)")
+		print("Touched at y: \(pos.y)")
+		
+		if pos.y > 0 {
+			// top half touch
+			moveUp(pos: pos)
+			
+		} else {
+			// bottom half touch
+			moveDown(pos: pos)
+		}
 		
     }
     
