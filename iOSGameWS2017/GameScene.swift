@@ -29,7 +29,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	
     override func didMove(to view: SKView) {
 		
-//		self.anchorPoint = CGPoint(x: 0.5, y: 0)
+		self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+		createGrounds()
 		
 		self.physicsWorld.contactDelegate = self
 		
@@ -71,7 +72,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			if (possibleBuilding.name == "Building" || possibleBuilding.name == "Buildingx") {
 				if (possibleBuilding is SKSpriteNode) {
 					possibleBuilding.physicsBody?.categoryBitMask = BodyType.building.rawValue
-					print("Found a \(possibleBuilding.name)!")
+					print("Found a \(String(describing: possibleBuilding.name))!")
 				}
 			}
 		}
@@ -123,6 +124,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	}
 	
 	override func update(_ currentTime: TimeInterval) {
+		moveGrounds()
 		// cleanUp()
 		// Called before each frame is rendered
 		
@@ -196,6 +198,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		} else if (contact.bodyB.categoryBitMask == BodyType.player.rawValue
 			&& contact.bodyA.categoryBitMask == BodyType.building.rawValue) {
 			print("touched a buildingy")
+		}
+	}
+	
+	func createGrounds() {
+		for i in 0...3 {
+			let ground = SKSpriteNode(imageNamed: "ground2-stars")
+			ground.name = "Ground"
+			ground.zPosition = -1
+			ground.size = CGSize(width: (self.scene?.size.width)!, height: (self.scene?.size.height)!)
+			ground.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+			ground.position = CGPoint(x: 0, y: CGFloat(i) * ground.size.height)
+			
+			self.addChild(ground)
+		}
+	}
+	
+	func moveGrounds() {
+		self.enumerateChildNodes(withName: "Ground") { (node, error) in
+			node.position.y -= 2
+			if (node.position.y < -(self.scene?.size.height)!) {
+				node.position.y += (self.scene?.size.height)! * 3
+			}
 		}
 	}
     
