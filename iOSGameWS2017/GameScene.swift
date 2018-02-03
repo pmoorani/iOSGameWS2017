@@ -13,6 +13,7 @@ enum BodyType: UInt32 {
 	
 	case player = 1
 	case building = 2
+	case Coin_AND_Bomb = 3
 	case somethingElse = 4
 	
 }
@@ -21,6 +22,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	
 	var thePlayer: SKSpriteNode = SKSpriteNode()
 	var moveSpeed: TimeInterval = 1
+	var center = CGFloat()
+	
+	// Load Item Controller
+	let itemController = ItemController()
+	
+	// Gestures
 	let swipeRightRec = UISwipeGestureRecognizer()
 	let swipeLeftRec = UISwipeGestureRecognizer()
 	let swipeTopRec = UISwipeGestureRecognizer()
@@ -30,7 +37,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func didMove(to view: SKView) {
 		
 		self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+		center = self.frame.size.width / self.frame.size.height
 		createGrounds()
+		
+		// Run a timer between 1 and 2 seconds and call the function generateItems()
+		Timer.scheduledTimer(timeInterval: TimeInterval (itemController.generateRandomNumber(firstNum: 1, secondNum: 2)), target: self, selector: #selector(GameScene.generateItems), userInfo: nil, repeats: true)
 		
 		self.physicsWorld.contactDelegate = self
 		
@@ -221,6 +232,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 				node.position.y += (self.scene?.size.height)! * 3
 			}
 		}
+	}
+	
+	@objc func generateItems() {
+		self.scene?.addChild(itemController.generateItem(scene: self.scene!))
 	}
     
     
