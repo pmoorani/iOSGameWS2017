@@ -24,7 +24,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	var infoLabel: SKLabelNode?
 	var scoreLabel: SKLabelNode?
 	var score: Int = 0
-	
+    var backGroundSound :SKAudioNode = SKAudioNode()
+    let bigCoinSound = SKAction.playSoundFileNamed("bigCoin.mp3", waitForCompletion: false)
+    let smallCoinSound = SKAction.playSoundFileNamed("smallCoin.wav", waitForCompletion: false)
+    let bombSound = SKAction.playSoundFileNamed("bomb.mp3", waitForCompletion: false)
+    
 	// Load Item Controller
 	let itemController = ItemController()
 	
@@ -44,6 +48,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		
 		// Create the background
 		createGrounds()
+        
+        //Saving sound URL and Adding it to background as music using SKAudioNode
+        if let musicURL = Bundle.main.url(forResource:"backMusic", withExtension: "mp3")  {
+            backGroundSound = SKAudioNode(url:musicURL)
+            addChild(backGroundSound)
+        }
 		
 		// Run a timer between 1 and 2 seconds and call the function generateItems()
 		Timer.scheduledTimer(timeInterval: TimeInterval (itemController.generateRandomNumber(firstNum: 1, secondNum: 2)), target: self, selector: #selector(GameScene.generateItems), userInfo: nil, repeats: true)
@@ -217,6 +227,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			
 			// Remove coin from scene
 			secondBody.node?.removeFromParent()
+            
+            //Euro 1 Sound
+            run(smallCoinSound)
 		}
 		
 		// Check if second body is Coin 2 -- point!!
@@ -229,6 +242,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			
 			// Remove coin from scene
 			secondBody.node?.removeFromParent()
+            
+            //2 Euro Sound
+            run(bigCoinSound)
 		}
 		
 		// Check if second body is Bomb -- game over case!
@@ -241,6 +257,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			
 			// Update the info label
 			infoLabel?.text = "Game Over!"
+            
+            //Bomb Sound
+            run(bombSound)
+            
+            //Stoping backgroungMusic
+            backGroundSound.run(SKAction.stop())
 			
 			// Set the timer to excute restartGame() function after 2 seconds
 			Timer.scheduledTimer(timeInterval: TimeInterval(2), target: self, selector: #selector(GameScene.restartGame), userInfo: nil, repeats: false)
