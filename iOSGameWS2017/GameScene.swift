@@ -25,6 +25,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	var scoreLabel: SKLabelNode?
 	var score: Int = 0
     var backGroundSound :SKAudioNode = SKAudioNode()
+	var ySpeed: Int = -2
     let bigCoinSound = SKAction.playSoundFileNamed("bigCoin.mp3", waitForCompletion: false)
     let smallCoinSound = SKAction.playSoundFileNamed("smallCoin.wav", waitForCompletion: false)
     let bombSound = SKAction.playSoundFileNamed("bomb.mp3", waitForCompletion: false)
@@ -57,6 +58,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		
 		// Run a timer between 1 and 2 seconds and call the function generateItems()
 		Timer.scheduledTimer(timeInterval: TimeInterval (itemController.generateRandomNumber(firstNum: 1, secondNum: 2)), target: self, selector: #selector(GameScene.generateItems), userInfo: nil, repeats: true)
+		
+		Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(GameScene.increaseSpeed), userInfo: nil, repeats: true)
+		Timer.scheduledTimer(timeInterval: 5.5, target: self, selector: #selector(GameScene.updateInfoLabel), userInfo: nil, repeats: true)
+		
 		
 		// Set this view to phyicsworld contact delegate to detect contacts/collisions
 		self.physicsWorld.contactDelegate = self
@@ -343,14 +348,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		}
 	}
 	
+	@objc func increaseSpeed() {
+		infoLabel?.text = "Level Up!"
+		self.physicsWorld.gravity = CGVector(dx: 0, dy: self.ySpeed)
+		self.ySpeed = self.ySpeed - 3
+	}
+	
+	@objc func updateInfoLabel(){
+		infoLabel?.text = ""
+	}
+	
 	// Restart the game if the player is hit by a Bomb!
 	@objc func restartGame() {
 		// Load the SKScene from 'GameScene.sks'
 		if let scene = SKScene(fileNamed: "GameScene") {
 			// Set the scale mode to scale to fit the window
 			scene.scaleMode = .aspectFill
-			
-			// Present the scene with a SKTransition having time interal of 2
+			scene.physicsWorld.gravity = CGVector(dx: 0, dy: -2)			// Present the scene with a SKTransition having time interal of 2
 			self.view?.presentScene(scene, transition: SKTransition.doorsOpenVertical(withDuration: TimeInterval(2)))
 		}
 	}
