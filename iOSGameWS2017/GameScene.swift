@@ -19,52 +19,42 @@ enum BodyType: UInt32 {
 class GameScene: SKScene, SKPhysicsContactDelegate {
 	// Declaring variables
 	var thePlayer: SKSpriteNode = SKSpriteNode()
-	var moveSpeed: TimeInterval = 1
-	var center = CGFloat()
 	var infoLabel: SKLabelNode?
 	var scoreLabel: SKLabelNode?
 	var score: Int = 0
     var backGroundSound :SKAudioNode = SKAudioNode()
 	var ySpeed: Int = -2
-    let bigCoinSound = SKAction.playSoundFileNamed("bigCoin.mp3", waitForCompletion: false)
+	
+	// SpriteKit Sound Actions
+	let bigCoinSound = SKAction.playSoundFileNamed("bigCoin.mp3", waitForCompletion: false)
     let smallCoinSound = SKAction.playSoundFileNamed("smallCoin.wav", waitForCompletion: false)
     let bombSound = SKAction.playSoundFileNamed("bomb.mp3", waitForCompletion: false)
     
 	// Load Item Controller
 	let itemController = ItemController()
 	
-	// Gestures
+	/* --------- LEARNING - IGNORE ---------
+	// Gestures -- implemented while learning
 	let swipeRightRec = UISwipeGestureRecognizer()
 	let swipeLeftRec = UISwipeGestureRecognizer()
 	let swipeTopRec = UISwipeGestureRecognizer()
 	let swipeBottomRec = UISwipeGestureRecognizer()
 	let rotateRec = UIRotationGestureRecognizer()
+	*/
 	
+	// didMove(to view: SKView) is called immediately after a scene is presented by a view.
     override func didMove(to view: SKView) {
 		// Set the anchor point
 		self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
 		
+		// Set this view to phyicsworld contact delegate to detect contacts/collisions
+		self.physicsWorld.contactDelegate = self
+		
 		// Assign the center of frame value to center variable
-		center = self.frame.size.width / self.frame.size.height
+		// center = self.frame.size.width / self.frame.size.height
 		
 		// Create the background
 		createGrounds()
-        
-        //Saving sound URL and Adding it to background as music using SKAudioNode
-        if let musicURL = Bundle.main.url(forResource:"backMusic", withExtension: "mp3")  {
-            backGroundSound = SKAudioNode(url:musicURL)
-            addChild(backGroundSound)
-        }
-		
-		// Run a timer between 1 and 2 seconds and call the function generateItems()
-		Timer.scheduledTimer(timeInterval: TimeInterval (itemController.generateRandomNumber(firstNum: 1, secondNum: 2)), target: self, selector: #selector(GameScene.generateItems), userInfo: nil, repeats: true)
-		
-		Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(GameScene.increaseSpeed), userInfo: nil, repeats: true)
-		Timer.scheduledTimer(timeInterval: 5.5, target: self, selector: #selector(GameScene.updateInfoLabel), userInfo: nil, repeats: true)
-		
-		
-		// Set this view to phyicsworld contact delegate to detect contacts/collisions
-		self.physicsWorld.contactDelegate = self
 		
 		// Check if player exists and initializae the player's properties
 		if let player: SKSpriteNode = self.childNode(withName: "player") as? SKSpriteNode {
@@ -104,11 +94,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		
 		// Set the Score Label text to zero
 		scoreLabel?.text = "0"
+        
+        //Saving sound URL and Adding it to background as music using SKAudioNode
+        if let musicURL = Bundle.main.url(forResource:"backMusic", withExtension: "mp3")  {
+            backGroundSound = SKAudioNode(url:musicURL)
+            addChild(backGroundSound)
+        }
 		
-		// Schedule the timer for every 8 seconds ot call removeItem function for deleting uncollected nodes
+		// Run a timer every 1 or 2 seconds and call the function generateItems()
+		Timer.scheduledTimer(timeInterval: TimeInterval (itemController.generateRandomNumber(firstNum: 1, secondNum: 2)), target: self, selector: #selector(GameScene.generateItems), userInfo: nil, repeats: true)
+		
+		// Run a timer every 5 seconds and call the increaseSpeed() function
+		Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(GameScene.increaseSpeed), userInfo: nil, repeats: true)
+		
+		// Run a timer every 5.5 seconds and call the updateInfoLabel() function
+		Timer.scheduledTimer(timeInterval: 5.5, target: self, selector: #selector(GameScene.updateInfoLabel), userInfo: nil, repeats: true)
+		
+		// Schedule the timer for every 8 seconds to call removeItem function for deleting uncollected nodes
 		Timer.scheduledTimer(timeInterval: TimeInterval(8), target: self, selector: #selector(GameScene.removeItem), userInfo: nil, repeats: true)
 		
-		/* LEARNING STUFF */
+		/*------------------- LEARNING STUFF --------------------------
 		// Learning Rotations and Swipe Gestures
 		rotateRec.addTarget(self, action: #selector (GameScene.rotatedView(_:) ))
 		self.view?.addGestureRecognizer(rotateRec)
@@ -128,16 +133,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		swipeBottomRec.addTarget(self, action: #selector(GameScene.swipedBottom))
 		swipeBottomRec.direction = .down
 		self.view?.addGestureRecognizer(swipeBottomRec)
+
 		
 		// Assigning CategoryBitMask to Building Sprite on the Scene
 		for possibleBuilding in self.children {
 			if (possibleBuilding.name == "Building" || possibleBuilding.name == "Buildingx") {
 				if (possibleBuilding is SKSpriteNode) {
 					possibleBuilding.physicsBody?.categoryBitMask = BodyType.building.rawValue
-//					print("Found a \(String(describing: possibleBuilding.name))!")
+					print("Found a \(String(describing: possibleBuilding.name))!")
 				}
 			}
 		}
+		*/
     }
 	
 	// Called before each frame is rendered
@@ -145,6 +152,178 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		// Move the background on every frame update
 		moveGrounds()
 		// cleanUp()
+	}
+	
+	// Create the background
+	func createGrounds() {
+		// For loop using range 0-3
+		for i in 0...3 {
+			// Create background node with image `ground2-stars`
+			let ground = SKSpriteNode(imageNamed: "ground2-stars")
+			
+			// Set background name
+			ground.name = "Ground"
+			
+			// Set background zPosition
+			ground.zPosition = -1
+			
+			// Set background size
+			ground.size = CGSize(width: (self.scene?.size.width)!, height: (self.scene?.size.height)!)
+			
+			// Set background anchor point
+			ground.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+			
+			// Set background position
+			//print("i: \(i) & y: \( CGFloat(i) * ground.size.height )")
+			ground.position = CGPoint(x: 0, y: CGFloat(i) * ground.size.height)
+			
+			// Add the background node to scene
+			self.addChild(ground)
+		}
+	}
+	
+	// Move the ground by moving it along y-axis
+	func moveGrounds() {
+		// enumerateChildNodes searches for a given node and returns callback of `node` and `error` in this case.
+		// `node` can be worked with for setting it's position or zposition etc.
+		self.enumerateChildNodes(withName: "Ground") { (node, error) in
+			// Move it along y-axis with a decrement of -2 in position.y
+			node.position.y -= 2
+			
+			// Check if position of the background is way off to the bottom of the screen
+			if (node.position.y < -(self.scene?.size.height)!) {
+				// Now Move the node along y-axis with an increment of scene height times the ground was created i.e. 3
+				node.position.y += (self.scene?.size.height)! * 3
+			}
+		}
+	}
+	
+	// Generate randomly a Coin or Bomb
+	@objc func generateItems() {
+		self.scene?.addChild(itemController.generateItem(scene: self.scene!))
+	}
+	
+	//MARK: Physics Contacts
+	func didBegin(_ contact: SKPhysicsContact) {
+		var firstBody = SKPhysicsBody()
+		var secondBody = SKPhysicsBody()
+		
+		// Assign the contact bodies to respective variables
+		// makes sure that firstBody is always `player`!
+		if contact.bodyA.node?.name == "player" {
+			// Assign bodyA to firstBody
+			firstBody = contact.bodyA
+			
+			// Assign bodyB to secondBody
+			secondBody = contact.bodyB
+		} else {
+			// Assign bodyB to firstBody
+			firstBody = contact.bodyB
+			
+			// Assign bodyA to secondBody
+			secondBody = contact.bodyA
+		}
+		
+		// Check if second body is Coin -- point!!
+		if firstBody.node?.name == "player" && secondBody.node?.name == "Coin" {
+			// Update the score
+			score += 1
+			
+			// Update the score label
+			scoreLabel?.text = String(score)
+			
+			// Remove coin from scene
+			secondBody.node?.removeFromParent()
+			
+			//Euro 1 Sound
+			run(smallCoinSound)
+		}
+		
+		// Check if second body is Coin 2 -- point!!
+		if firstBody.node?.name == "player" && secondBody.node?.name == "Coin2" {
+			// Update the score
+			score += 2
+			
+			// Update the score label
+			scoreLabel?.text = String(score)
+			
+			// Remove coin from scene
+			secondBody.node?.removeFromParent()
+			
+			//2 Euro Sound
+			run(bigCoinSound)
+		}
+		
+		// Check if second body is Bomb -- game over case!
+		if firstBody.node?.name == "player" && secondBody.node?.name == "Bomb" {
+			// Remove first body from scene
+			firstBody.node?.removeFromParent()
+			
+			// Remove second body from scene
+			secondBody.node?.removeFromParent()
+			
+			// Update the info label
+			infoLabel?.text = "Game Over!"
+			
+			// Bomb Sound
+			run(bombSound)
+			
+			// Stoping Background Music
+			backGroundSound.run(SKAction.stop())
+			
+			// Set the timer to excute restartGame() function after 2 seconds
+			Timer.scheduledTimer(timeInterval: TimeInterval(2), target: self, selector: #selector(GameScene.restartGame), userInfo: nil, repeats: false)
+		}
+		
+		/*
+		if (contact.bodyA.categoryBitMask == BodyType.player.rawValue
+		&& contact.bodyB.categoryBitMask == BodyType.building.rawValue) {
+		print("touched a buildingx")
+		} else if (contact.bodyB.categoryBitMask == BodyType.player.rawValue
+		&& contact.bodyA.categoryBitMask == BodyType.building.rawValue) {
+		print("touched a buildingy")
+		}
+		*/
+	}
+	
+	// Remove uncollected Coins and Bombs to optimize performance
+	@objc func removeItem() {
+		// Nodes as `children` - inherited from SKScene
+		for child in children {
+			// Check if child's name is either coin or bomb or coin2
+			if child.name == "Coin" || child.name == "Bomb" || child.name == "Coin2" {
+				// check if child's position is out of the bounds on y-axis in negative and remove it
+				if child.position.y < -(self.scene?.frame.height)! - 100 {
+					// remove the child if it has already passed down to bottom of the screen and out of frame
+					child.removeFromParent()
+				}
+			}
+		}
+	}
+	
+	@objc func increaseSpeed() {
+		infoLabel?.text = "Level Up!"
+		self.physicsWorld.gravity = CGVector(dx: 0, dy: self.ySpeed)
+		self.ySpeed = self.ySpeed - 3
+	}
+	
+	@objc func updateInfoLabel(){
+		infoLabel?.text = ""
+	}
+	
+	// Restart the game if the player is hit by a Bomb!
+	@objc func restartGame() {
+		// Load the SKScene from 'GameScene.sks'
+		if let scene = SKScene(fileNamed: "GameScene") {
+			// Set the scene scale mode to scale to fit the window
+			scene.scaleMode = .aspectFill
+			
+			// set the scene physics world gravity to 0 on x-axis and -2 on y-axis
+			scene.physicsWorld.gravity = CGVector(dx: 0, dy: -2)
+			
+			// Present the scene with a SKTransition having time interal of 2
+			self.view?.presentScene(scene, transition: SKTransition.doorsOpenVertical(withDuration: TimeInterval(2)))
+		}
 	}
 	
 	// Move down function
@@ -201,174 +380,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for t in touches { self.touchUp(atPoint: t.location(in: self)) }
     }
 	
-	//MARK: Physics Contacts
-	func didBegin(_ contact: SKPhysicsContact) {
-		var firstBody = SKPhysicsBody()
-		var secondBody = SKPhysicsBody()
-		
-		// Assign the contact bodies to respective variables
-		// makes sure that firstBody is always `player`!
-		if contact.bodyA.node?.name == "player" {
-			// Assign bodyA to firstBody
-			firstBody = contact.bodyA
-			
-			// Assign bodyB to secondBody
-			secondBody = contact.bodyB
-		} else {
-			// Assign bodyB to firstBody
-			firstBody = contact.bodyB
-			
-			// Assign bodyA to secondBody
-			secondBody = contact.bodyA
-		}
-		
-		// Check if second body is Coin -- point!!
-		if firstBody.node?.name == "player" && secondBody.node?.name == "Coin" {
-			// Update the score
-			score += 1
-			
-			// Update the score label
-			scoreLabel?.text = String(score)
-			
-			// Remove coin from scene
-			secondBody.node?.removeFromParent()
-            
-            //Euro 1 Sound
-            run(smallCoinSound)
-		}
-		
-		// Check if second body is Coin 2 -- point!!
-		if firstBody.node?.name == "player" && secondBody.node?.name == "Coin2" {
-			// Update the score
-			score += 2
-			
-			// Update the score label
-			scoreLabel?.text = String(score)
-			
-			// Remove coin from scene
-			secondBody.node?.removeFromParent()
-            
-            //2 Euro Sound
-            run(bigCoinSound)
-		}
-		
-		// Check if second body is Bomb -- game over case!
-		if firstBody.node?.name == "player" && secondBody.node?.name == "Bomb" {
-			// Remove first body from scene
-			firstBody.node?.removeFromParent()
-			
-			// Remove second body from scene
-			secondBody.node?.removeFromParent()
-			
-			// Update the info label
-			infoLabel?.text = "Game Over!"
-            
-            //Bomb Sound
-            run(bombSound)
-            
-            //Stoping backgroungMusic
-            backGroundSound.run(SKAction.stop())
-			
-			// Set the timer to excute restartGame() function after 2 seconds
-			Timer.scheduledTimer(timeInterval: TimeInterval(2), target: self, selector: #selector(GameScene.restartGame), userInfo: nil, repeats: false)
-		}
-		
-		/*
-		if (contact.bodyA.categoryBitMask == BodyType.player.rawValue
-			&& contact.bodyB.categoryBitMask == BodyType.building.rawValue) {
-			print("touched a buildingx")
-		} else if (contact.bodyB.categoryBitMask == BodyType.player.rawValue
-			&& contact.bodyA.categoryBitMask == BodyType.building.rawValue) {
-			print("touched a buildingy")
-		}
-		*/
-	}
-	
-	// Create the background
-	func createGrounds() {
-		// For loop using range 0-3
-		for i in 0...3 {
-			// Create background node with image `ground2-stars`
-			let ground = SKSpriteNode(imageNamed: "ground2-stars")
-			
-			// Set background name
-			ground.name = "Ground"
-			
-			// Set background zPosition
-			ground.zPosition = -1
-			
-			// Set background size
-			ground.size = CGSize(width: (self.scene?.size.width)!, height: (self.scene?.size.height)!)
-			
-			// Set background anchor point
-			ground.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-			
-			// Set background position
-			print("i: \(i) & y: \( CGFloat(i) * ground.size.height )")
-			ground.position = CGPoint(x: 0, y: CGFloat(i) * ground.size.height)
-			
-			// Add the background node to scene
-			self.addChild(ground)
-		}
-	}
-	
-	// Move the ground by moving it along y-axis
-	func moveGrounds() {
-		// enumerateChildNodes searches for a given node and returns callback of `node` and `error` in this case.
-		// `node` can be worked with for setting it's position or zposition etc.
-		self.enumerateChildNodes(withName: "Ground") { (node, error) in
-			// Move it along y-axis with a decrement of -2 in position.y
-			node.position.y -= 2
-			
-			// Check if position of the background is way off to the bottom of the screen
-			if (node.position.y < -(self.scene?.size.height)!) {
-				// Now Move the node along y-axis with an increment of scene height times the ground was created i.e. 3
-				node.position.y += (self.scene?.size.height)! * 3
-			}
-		}
-	}
-	
-	// Generate randomly a Coin or Bomb
-	@objc func generateItems() {
-		self.scene?.addChild(itemController.generateItem(scene: self.scene!))
-	}
-	
-	// Remove uncollected Coins and Bombs to optimize performance
-	@objc func removeItem() {
-		// `children` as Nodes - inherited from SKScene
-		for child in children {
-			// Check if child's name is either coin or bomb or coin2
-			if child.name == "Coin" || child.name == "Bomb" || child.name == "Coin2" {
-				// check if child's position is out of the bounds on y-axis in negative and remove it
-				if child.position.y < -(self.scene?.frame.height)! - 100 {
-					// remove the child if it has already passed down to bottom of the screen and out of frame
-					child.removeFromParent()
-				}
-			}
-		}
-	}
-	
-	@objc func increaseSpeed() {
-		infoLabel?.text = "Level Up!"
-		self.physicsWorld.gravity = CGVector(dx: 0, dy: self.ySpeed)
-		self.ySpeed = self.ySpeed - 3
-	}
-	
-	@objc func updateInfoLabel(){
-		infoLabel?.text = ""
-	}
-	
-	// Restart the game if the player is hit by a Bomb!
-	@objc func restartGame() {
-		// Load the SKScene from 'GameScene.sks'
-		if let scene = SKScene(fileNamed: "GameScene") {
-			// Set the scale mode to scale to fit the window
-			scene.scaleMode = .aspectFill
-			scene.physicsWorld.gravity = CGVector(dx: 0, dy: -2)			// Present the scene with a SKTransition having time interal of 2
-			self.view?.presentScene(scene, transition: SKTransition.doorsOpenVertical(withDuration: TimeInterval(2)))
-		}
-	}
-	
+	/*
 	//MARK: Gesture Recognizer Functions
 	@objc func rotatedView(_ sender: UIRotationGestureRecognizer) {
 		if (sender.state == .began) {
@@ -405,12 +417,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 	@objc func swipedBottom() {
 		print("Swiped Bottom")
 	}
+
 	
 	// Clean Gestures when switching to different scene class
 	func cleanUp() {
 		for gesture in (self.view?.gestureRecognizers)! {
 			self.view?.removeGestureRecognizer(gesture)
 		}
-	}
-	
+	}*/
 }
