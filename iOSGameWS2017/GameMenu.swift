@@ -28,6 +28,7 @@ class GameMenu: SKScene {
 				let gameScene = GameScene(fileNamed: "GameScene")!
 				let transition = SKTransition.flipHorizontal(withDuration: 1)
 				gameScene.scaleMode = .aspectFill
+				gameScene.physicsWorld.gravity = CGVector(dx: 0, dy: -2)
 				self.view?.presentScene(gameScene, transition: transition)
 			} else if nodesArray.first?.name == "quitButton" {
 				quit()
