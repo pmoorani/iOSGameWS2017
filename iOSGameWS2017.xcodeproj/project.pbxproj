@@ -11,6 +11,7 @@
 		13E31AED202E0FF300B7B1E3 /* smallCoin.wav in Resources */ = {isa = PBXBuildFile; fileRef = 13E31AE9202E0FF300B7B1E3 /* smallCoin.wav */; };
 		13E31AEE202E0FF300B7B1E3 /* backMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 13E31AEA202E0FF300B7B1E3 /* backMusic.mp3 */; };
 		13E31AEF202E0FF300B7B1E3 /* bigCoin.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 13E31AEB202E0FF300B7B1E3 /* bigCoin.mp3 */; };
+		99D3A1F320404EF800F76991 /* explosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = 99D3A1F220404EF800F76991 /* explosion.sks */; };
 		DE7D8B5E202535B400127AC9 /* ItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE7D8B5D202535B400127AC9 /* ItemController.swift */; };
 		DE7D95C8200EB44A001C5E7A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE7D95C7200EB44A001C5E7A /* AppDelegate.swift */; };
 		DE7D95CA200EB44A001C5E7A /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = DE7D95C9200EB44A001C5E7A /* GameScene.sks */; };
@@ -29,6 +30,7 @@
 		13E31AE9202E0FF300B7B1E3 /* smallCoin.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = smallCoin.wav; sourceTree = "<group>"; };
 		13E31AEA202E0FF300B7B1E3 /* backMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = backMusic.mp3; sourceTree = "<group>"; };
 		13E31AEB202E0FF300B7B1E3 /* bigCoin.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bigCoin.mp3; sourceTree = "<group>"; };
+		99D3A1F220404EF800F76991 /* explosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = explosion.sks; sourceTree = "<group>"; };
 		DE7D8B5D202535B400127AC9 /* ItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemController.swift; sourceTree = "<group>"; };
 		DE7D95C4200EB44A001C5E7A /* iOSGameWS2017.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSGameWS2017.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE7D95C7200EB44A001C5E7A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -93,6 +95,7 @@
 		DE7D95C6200EB44A001C5E7A /* iOSGameWS2017 */ = {
 			isa = PBXGroup;
 			children = (
+				99D3A1F220404EF800F76991 /* explosion.sks */,
 				13E31AE7202E0FBD00B7B1E3 /* Sounds */,
 				DE7D8B5C20252E0400127AC9 /* Items Controller Classes */,
 				DE7D95C7200EB44A001C5E7A /* AppDelegate.swift */,
@@ -171,6 +174,7 @@
 			files = (
 				DE92AE79203B717A00340E5E /* GameMenu.sks in Resources */,
 				13E31AED202E0FF300B7B1E3 /* smallCoin.wav in Resources */,
+				99D3A1F320404EF800F76991 /* explosion.sks in Resources */,
 				DE7D95D3200EB44A001C5E7A /* Main.storyboard in Resources */,
 				DE7D95CA200EB44A001C5E7A /* GameScene.sks in Resources */,
 				13E31AEC202E0FF300B7B1E3 /* bomb.mp3 in Resources */,

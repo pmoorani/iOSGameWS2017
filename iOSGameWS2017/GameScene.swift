@@ -256,6 +256,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 		
 		// Check if second body is Bomb -- game over case!
 		if firstBody.node?.name == "player" && secondBody.node?.name == "Bomb" {
+            
 			// Remove first body from scene
 			firstBody.node?.removeFromParent()
 			
@@ -267,6 +268,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 			
 			// Bomb Sound
 			run(bombSound)
+            
+            // Show explosion animation
+            let explosion = SKEmitterNode(fileNamed: "explosion")!
+            
+            explosion.position = thePlayer.position
+            
+            self.addChild(explosion)
+            
+            self.run(SKAction.wait(forDuration: 2)){
+                explosion.removeFromParent()
+            }
 			
 			// Stoping Background Music
 			backGroundSound.run(SKAction.stop())
